@@ -3,17 +3,46 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useEffect, useState } from "react";
+
+interface ProfileData {
+  username: string;
+  full_name?: string;
+  profile_pic_url: string;
+}
 
 const ProfileConfirmation = () => {
   const navigate = useNavigate();
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+
+  useEffect(() => {
+    const storedProfile = sessionStorage.getItem('other_instagram_profile');
+    if (storedProfile) {
+      setProfileData(JSON.parse(storedProfile));
+    } else {
+      // If no profile data, redirect back to input
+      navigate('/perfil-outras-pessoas');
+    }
+  }, [navigate]);
 
   const handleContinue = () => {
     navigate('/results');
   };
 
   const handleCorrect = () => {
+    // Clear stored data and go back to input
+    sessionStorage.removeItem('other_instagram_username');
+    sessionStorage.removeItem('other_instagram_profile');
     navigate('/perfil-outras-pessoas');
   };
+
+  if (!profileData) {
+    return (
+      <div className="min-h-screen bg-gray-200 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-200 flex flex-col">
@@ -28,19 +57,21 @@ const ProfileConfirmation = () => {
           {/* Profile picture */}
           <div className="flex justify-center mb-6">
             <Avatar className="w-24 h-24">
-              <AvatarImage src="/placeholder.svg" alt="Fernanda" />
-              <AvatarFallback className="text-2xl">F</AvatarFallback>
+              <AvatarImage src={profileData.profile_pic_url} alt={profileData.full_name || profileData.username} />
+              <AvatarFallback className="text-2xl">
+                {(profileData.full_name || profileData.username).charAt(0).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
           </div>
 
           {/* Name */}
           <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">
-            Fernanda
+            {profileData.full_name || profileData.username}
           </h1>
 
           {/* Handle */}
           <p className="text-center text-orange-500 mb-8 font-medium">
-            @afelopes
+            @{profileData.username}
           </p>
 
           {/* Question */}

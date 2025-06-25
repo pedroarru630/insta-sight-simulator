@@ -2,17 +2,43 @@
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { InstagramService } from "@/services/InstagramService";
 
 const MeuProprioPerfilLoading = () => {
   const navigate = useNavigate();
 
-  // Auto-navigate to confirmation after 3 seconds for demo purposes
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate('/meu-proprio-perfil-confirmation');
-    }, 3000);
+    const fetchProfile = async () => {
+      const username = sessionStorage.getItem('instagram_username');
+      
+      if (!username) {
+        // If no username, redirect back to input
+        navigate('/meu-proprio-perfil-input');
+        return;
+      }
 
-    return () => clearTimeout(timer);
+      try {
+        console.log('Starting Instagram profile fetch for:', username);
+        const profileData = await InstagramService.getProfile(username);
+        
+        if (profileData.exists) {
+          // Store the profile data for the next pages
+          sessionStorage.setItem('instagram_profile', JSON.stringify(profileData));
+          console.log('Profile found, redirecting to confirmation');
+          navigate('/meu-proprio-perfil-confirmation');
+        } else {
+          // Profile doesn't exist, stay on loading or show error
+          console.log('Profile not found, staying on loading page');
+          // For now, just stay on loading page
+          // In the future, you could show an error message
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        // Handle error - for now stay on loading page
+      }
+    };
+
+    fetchProfile();
   }, [navigate]);
 
   return (

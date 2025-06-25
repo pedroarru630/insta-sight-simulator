@@ -2,17 +2,42 @@
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { InstagramService } from "@/services/InstagramService";
 
 const Loading = () => {
   const navigate = useNavigate();
 
-  // Auto-navigate to confirmation after 3 seconds for demo purposes
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate('/profile-confirmation');
-    }, 3000);
+    const fetchProfile = async () => {
+      const username = sessionStorage.getItem('other_instagram_username');
+      
+      if (!username) {
+        // If no username, redirect back to input
+        navigate('/perfil-outras-pessoas');
+        return;
+      }
 
-    return () => clearTimeout(timer);
+      try {
+        console.log('Starting Instagram profile fetch for other person:', username);
+        const profileData = await InstagramService.getProfile(username);
+        
+        if (profileData.exists) {
+          // Store the profile data for the next pages
+          sessionStorage.setItem('other_instagram_profile', JSON.stringify(profileData));
+          console.log('Other person profile found, redirecting to confirmation');
+          navigate('/profile-confirmation');
+        } else {
+          // Profile doesn't exist, stay on loading or show error
+          console.log('Other person profile not found, staying on loading page');
+          // For now, just stay on loading page
+        }
+      } catch (error) {
+        console.error('Error fetching other person profile:', error);
+        // Handle error - for now stay on loading page
+      }
+    };
+
+    fetchProfile();
   }, [navigate]);
 
   return (

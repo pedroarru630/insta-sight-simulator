@@ -14,6 +14,8 @@ const PerfilOutrasPessoas = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.trim()) {
+      // Store the username in sessionStorage for the flow
+      sessionStorage.setItem('other_instagram_username', username.trim());
       navigate('/loading');
     }
   };
@@ -74,8 +76,14 @@ const PerfilOutrasPessoas = () => {
               </span>
             </div>
 
-            {/* Submit button (hidden, triggered by Enter key) */}
-            <button type="submit" className="hidden" />
+            {/* Submit button */}
+            <Button 
+              type="submit" 
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded-xl mb-4"
+              disabled={!username.trim()}
+            >
+              Continuar
+            </Button>
           </form>
 
           {/* Warning block */}
