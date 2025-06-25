@@ -2,65 +2,68 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import { User } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-const Index = () => {
+const ProfileConfirmation = () => {
   const navigate = useNavigate();
+
+  const handleContinue = () => {
+    navigate('/results');
+  };
+
+  const handleCorrect = () => {
+    navigate('/perfil-outras-pessoas');
+  };
 
   return (
     <div className="min-h-screen bg-gray-200 flex flex-col">
       {/* Progress bar at top */}
       <div className="w-full px-4 pt-4">
-        <Progress value={20} className="h-2" />
+        <Progress value={80} className="h-2" />
       </div>
 
       {/* Main content */}
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-lg">
-          {/* Central icon */}
+          {/* Profile picture */}
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-orange-500 rounded-full flex items-center justify-center">
-              <div className="text-white text-2xl">
-                🕵️
-              </div>
-            </div>
+            <Avatar className="w-24 h-24">
+              <AvatarImage src="/placeholder.svg" alt="Fernanda" />
+              <AvatarFallback className="text-2xl">F</AvatarFallback>
+            </Avatar>
           </div>
 
-          {/* Main title */}
+          {/* Name */}
           <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">
-            Descubra em 1 minuto
+            Fernanda
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-center text-gray-600 mb-2">
-            Todas as informações que
-          </p>
-          <p className="text-center text-gray-600 mb-8">
-            o instagram esconde de você.
+          {/* Handle */}
+          <p className="text-center text-orange-500 mb-8 font-medium">
+            @afelopes
           </p>
 
           {/* Question */}
-          <p className="text-center text-gray-700 mb-6 font-medium">
-            Qual perfil você quer investigar?
+          <p className="text-center text-gray-700 mb-8 font-medium">
+            O instagram está correto?
           </p>
 
-          {/* Buttons */}
-          <div className="space-y-4">
-            <Button 
-              onClick={() => navigate('/meu-proprio-perfil')}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-4 text-lg rounded-xl"
-            >
-              <User className="mr-2" size={20} />
-              Meu próprio perfil
-            </Button>
+          {/* Continue button */}
+          <Button 
+            onClick={handleContinue}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-4 text-lg rounded-xl mb-4"
+          >
+            Continuar, está correto!
+          </Button>
 
-            <Button 
-              onClick={() => navigate('/perfil-outras-pessoas')}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-4 text-lg rounded-xl"
+          {/* Correct option */}
+          <div className="flex justify-center">
+            <button 
+              onClick={handleCorrect}
+              className="text-gray-600 hover:text-gray-800 font-medium flex items-center"
             >
-              <User className="mr-2" size={20} />
-              Perfil de outras pessoas
-            </Button>
+              ← Corrigir
+            </button>
           </div>
         </div>
       </div>
@@ -94,4 +97,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default ProfileConfirmation;

@@ -1,17 +1,25 @@
 
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import { User } from "lucide-react";
+import { useEffect } from "react";
 
-const Index = () => {
+const Loading = () => {
   const navigate = useNavigate();
+
+  // Auto-navigate to confirmation after 3 seconds for demo purposes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate('/profile-confirmation');
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gray-200 flex flex-col">
       {/* Progress bar at top */}
       <div className="w-full px-4 pt-4">
-        <Progress value={20} className="h-2" />
+        <Progress value={60} className="h-2" />
       </div>
 
       {/* Main content */}
@@ -26,42 +34,20 @@ const Index = () => {
             </div>
           </div>
 
+          {/* Loading spinner */}
+          <div className="flex justify-center mb-6">
+            <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+
           {/* Main title */}
-          <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">
-            Descubra em 1 minuto
+          <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
+            Procurando...
           </h1>
 
           {/* Subtitle */}
-          <p className="text-center text-gray-600 mb-2">
-            Todas as informações que
+          <p className="text-center text-gray-600 leading-relaxed">
+            Nossos robôs estão procurando informações sobre esse perfil, aguarde um momento
           </p>
-          <p className="text-center text-gray-600 mb-8">
-            o instagram esconde de você.
-          </p>
-
-          {/* Question */}
-          <p className="text-center text-gray-700 mb-6 font-medium">
-            Qual perfil você quer investigar?
-          </p>
-
-          {/* Buttons */}
-          <div className="space-y-4">
-            <Button 
-              onClick={() => navigate('/meu-proprio-perfil')}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-4 text-lg rounded-xl"
-            >
-              <User className="mr-2" size={20} />
-              Meu próprio perfil
-            </Button>
-
-            <Button 
-              onClick={() => navigate('/perfil-outras-pessoas')}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-4 text-lg rounded-xl"
-            >
-              <User className="mr-2" size={20} />
-              Perfil de outras pessoas
-            </Button>
-          </div>
         </div>
       </div>
 
@@ -94,4 +80,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Loading;
