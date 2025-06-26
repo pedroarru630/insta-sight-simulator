@@ -6,10 +6,16 @@ interface InstagramProfile {
   exists: boolean;
 }
 
-interface ApifyResponse {
+interface ApifyProfileData {
   username: string;
   fullName?: string;
   profilePicUrl: string;
+}
+
+interface ApifyResponse {
+  data: {
+    items: ApifyProfileData[];
+  };
 }
 
 export class InstagramService {
@@ -37,10 +43,12 @@ export class InstagramService {
         throw new Error(`API request failed with status: ${response.status}`);
       }
 
-      const data: ApifyResponse[] = await response.json();
-      console.log('Apify API response:', data);
+      const responseJson: ApifyResponse = await response.json();
+      console.log('Apify API response:', responseJson);
 
-      if (!data || data.length === 0) {
+      const items = responseJson.data?.items || [];
+
+      if (items.length === 0) {
         console.log('No profile data returned from API');
         return {
           username: cleanUsername,
@@ -50,7 +58,7 @@ export class InstagramService {
         };
       }
 
-      const profileData = data[0];
+      const profileData = items[0];
       
       return {
         username: profileData.username || cleanUsername,
