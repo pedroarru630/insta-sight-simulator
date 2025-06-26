@@ -6,52 +6,62 @@ interface InstagramProfile {
   exists: boolean;
 }
 
+interface ApifyResponse {
+  username: string;
+  fullName?: string;
+  profilePicUrl: string;
+}
+
 export class InstagramService {
-  private static API_BASE_URL = 'https://api.example.com/instagram'; // Replace with actual API
+  private static APIFY_API_URL = 'https://api.apify.com/v2/actor-tasks/chatty_coaster~instagram-scraper-task/run-sync?token=apify_api_Tk435sUb2WnBllXsxxfNQaBLkHSZyz0HLRCO';
 
   static async getProfile(username: string): Promise<InstagramProfile> {
     try {
       console.log('Fetching Instagram profile for:', username);
       
-      // For now, simulate API call with realistic data
-      // In production, replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API delay
+      const cleanUsername = username.replace('@', '');
       
-      // Mock successful response with realistic profile data
-      return {
-        username: username.replace('@', ''),
-        full_name: 'Fernanda Lopez',
-        profile_pic_url: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=200&h=200&fit=crop&crop=face',
-        exists: true
-      };
-      
-      /* 
-      // Real API implementation would look like this:
-      const response = await fetch(`${this.API_BASE_URL}/profile`, {
+      const response = await fetch(this.APIFY_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username: username.replace('@', '') })
+        body: JSON.stringify({
+          searchQuery: cleanUsername
+        })
       });
 
       if (!response.ok) {
-        throw new Error('Profile not found');
+        throw new Error(`API request failed with status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: ApifyResponse[] = await response.json();
+      console.log('Apify API response:', data);
+
+      if (!data || data.length === 0) {
+        console.log('No profile data returned from API');
+        return {
+          username: cleanUsername,
+          full_name: undefined,
+          profile_pic_url: '/placeholder.svg',
+          exists: false
+        };
+      }
+
+      const profileData = data[0];
+      
       return {
-        username: data.username,
-        full_name: data.full_name,
-        profile_pic_url: data.profile_pic_url,
+        username: profileData.username || cleanUsername,
+        full_name: profileData.fullName,
+        profile_pic_url: profileData.profilePicUrl || '/placeholder.svg',
         exists: true
       };
-      */
+      
     } catch (error) {
       console.error('Error fetching Instagram profile:', error);
       return {
         username: username.replace('@', ''),
-        full_name: 'Usuario',
+        full_name: undefined,
         profile_pic_url: '/placeholder.svg',
         exists: false
       };

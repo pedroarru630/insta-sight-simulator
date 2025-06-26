@@ -1,18 +1,18 @@
 
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { InstagramService } from "@/services/InstagramService";
 
 const MeuProprioPerfilLoading = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       const username = sessionStorage.getItem('instagram_username');
       
       if (!username) {
-        // If no username, redirect back to input
         navigate('/meu-proprio-perfil-input');
         return;
       }
@@ -22,19 +22,22 @@ const MeuProprioPerfilLoading = () => {
         const profileData = await InstagramService.getProfile(username);
         
         if (profileData.exists) {
-          // Store the profile data for the next pages
           sessionStorage.setItem('instagram_profile', JSON.stringify(profileData));
           console.log('Profile found, redirecting to confirmation');
           navigate('/meu-proprio-perfil-confirmation');
         } else {
-          // Profile doesn't exist, stay on loading or show error
-          console.log('Profile not found, staying on loading page');
-          // For now, just stay on loading page
-          // In the future, you could show an error message
+          console.log('Profile not found, redirecting back to input');
+          setError('Perfil não encontrado. Tente novamente.');
+          setTimeout(() => {
+            navigate('/meu-proprio-perfil-input');
+          }, 3000);
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
-        // Handle error - for now stay on loading page
+        setError('Erro ao buscar perfil. Tente novamente.');
+        setTimeout(() => {
+          navigate('/meu-proprio-perfil-input');
+        }, 3000);
       }
     };
 
@@ -61,18 +64,27 @@ const MeuProprioPerfilLoading = () => {
           </div>
 
           {/* Loading spinner */}
-          <div className="flex justify-center mb-6">
-            <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>
+          {!error && (
+            <div className="flex justify-center mb-6">
+              <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+
+          {/* Error state */}
+          {error && (
+            <div className="flex justify-center mb-6">
+              <div className="text-red-500 text-2xl">❌</div>
+            </div>
+          )}
 
           {/* Main title */}
           <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
-            Procurando...
+            {error ? 'Erro' : 'Procurando...'}
           </h1>
 
           {/* Subtitle */}
           <p className="text-center text-gray-600 leading-relaxed">
-            Nossos robôs estão procurando informações sobre esse perfil, aguarde um momento
+            {error || 'Nossos robôs estão procurando informações sobre esse perfil, aguarde um momento'}
           </p>
         </div>
       </div>
