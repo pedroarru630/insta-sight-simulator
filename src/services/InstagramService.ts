@@ -33,9 +33,15 @@ export class InstagramService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          searchQuery: cleanUsername,
-          searchType: "user",
-          resultsLimit: 1
+          addParentData: false,
+          enhanceUserSearchWithFacebookPage: false,
+          isUserReelFeedURL: false,
+          isUserTaggedFeedURL: false,
+          resultsLimit: 200,
+          resultsType: "posts",
+          search: cleanUsername,
+          searchLimit: 1,
+          searchType: "user"
         })
       });
 
