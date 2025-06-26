@@ -27,7 +27,9 @@ export class InstagramService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          searchQuery: cleanUsername
+          searchQuery: cleanUsername,
+          searchType: "user",
+          resultsLimit: 1
         })
       });
 
