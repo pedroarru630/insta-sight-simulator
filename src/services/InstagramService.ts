@@ -9,7 +9,7 @@ interface InstagramProfile {
 interface ApifyProfileData {
   username: string;
   fullName?: string;
-  profilePicUrl: string;
+  profilePicUrlHD: string;
 }
 
 interface ApifyResponse {
@@ -65,11 +65,12 @@ export class InstagramService {
       }
 
       const profileData = items[0];
+      console.log('Profile data found:', profileData);
       
       return {
         username: profileData.username || cleanUsername,
         full_name: profileData.fullName,
-        profile_pic_url: profileData.profilePicUrl || '/placeholder.svg',
+        profile_pic_url: profileData.profilePicUrlHD || '/placeholder.svg',
         exists: true
       };
       
